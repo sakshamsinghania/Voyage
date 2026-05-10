@@ -22,34 +22,83 @@ export interface SessionDetail extends SessionSummary {
   messages: Message[];
 }
 
+export interface User {
+  id: string;
+  email: string;
+  created_at: string;
+}
+
 const base = "/api";
+const fetchOpts: RequestInit = { credentials: "include" };
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`${res.status}: ${text}`);
+    let detail = res.statusText;
+    try {
+      const body = await res.json();
+      if (body?.detail) detail = body.detail;
+    } catch {
+      detail = (await res.text().catch(() => res.statusText)) || detail;
+    }
+    throw new Error(detail);
   }
   return res.json() as Promise<T>;
 }
 
+export class AuthError extends Error {
+  constructor() {
+    super("auth required");
+  }
+}
+
+async function jsonAuth<T>(res: Response): Promise<T> {
+  if (res.status === 401) throw new AuthError();
+  return json<T>(res);
+}
+
 export const api = {
-  listSessions: () => fetch(`${base}/sessions`).then(json<SessionSummary[]>),
-  getSession: (id: string) => fetch(`${base}/sessions/${id}`).then(json<SessionDetail>),
+  listSessions: () =>
+    fetch(`${base}/sessions`, fetchOpts).then(jsonAuth<SessionSummary[]>),
+  getSession: (id: string) =>
+    fetch(`${base}/sessions/${id}`, fetchOpts).then(jsonAuth<SessionDetail>),
   createSession: (title?: string) =>
     fetch(`${base}/sessions`, {
+      ...fetchOpts,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
-    }).then(json<SessionDetail>),
+    }).then(jsonAuth<SessionDetail>),
   renameSession: (id: string, title: string) =>
     fetch(`${base}/sessions/${id}`, {
+      ...fetchOpts,
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
-    }).then(json<SessionSummary>),
+    }).then(jsonAuth<SessionSummary>),
   deleteSession: (id: string) =>
-    fetch(`${base}/sessions/${id}`, { method: "DELETE" }).then((r) => {
+    fetch(`${base}/sessions/${id}`, { ...fetchOpts, method: "DELETE" }).then((r) => {
+      if (r.status === 401) throw new AuthError();
       if (!r.ok) throw new Error(`${r.status}`);
     }),
-  health: () => fetch(`${base}/health`).then(json<{ status: string; model: string }>),
+  health: () =>
+    fetch(`${base}/health`, fetchOpts).then(json<{ status: string; model: string }>),
+  me: () => fetch(`${base}/auth/me`, fetchOpts).then(jsonAuth<User>),
+  login: (email: string, password: string) =>
+    fetch(`${base}/auth/login`, {
+      ...fetchOpts,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    }).then(json<User>),
+  register: (email: string, password: string) =>
+    fetch(`${base}/auth/register`, {
+      ...fetchOpts,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    }).then(json<User>),
+  logout: () =>
+    fetch(`${base}/auth/logout`, { ...fetchOpts, method: "POST" }).then((r) => {
+      if (!r.ok && r.status !== 204) throw new Error(`${r.status}`);
+    }),
 };

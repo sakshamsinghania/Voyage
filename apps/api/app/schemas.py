@@ -1,6 +1,17 @@
 from datetime import datetime
 from typing import Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
+
+
+class UserOut(BaseModel):
+    id: str
+    email: str
+    created_at: datetime
+
+
+class AuthCredentials(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=200)
 
 
 Role = Literal["user", "assistant", "system", "tool"]

@@ -1,4 +1,5 @@
 import type { SessionSummary } from "../lib/api";
+import { useAuth } from "../lib/auth";
 import { formatTime } from "../lib/format";
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function Sidebar({ sessions, activeId, onSelect, onNew, onDelete, status, modelLabel }: Props) {
+  const { user, signOut } = useAuth();
   return (
     <aside className="hidden md:flex flex-col w-[260px] shrink-0 bg-ground border-r border-rim">
       <header className="flex items-center justify-between px-4 h-12 border-b border-rim">
@@ -81,7 +83,7 @@ export function Sidebar({ sessions, activeId, onSelect, onNew, onDelete, status,
         )}
       </nav>
 
-      <footer className="border-t border-rim px-4 py-3 space-y-1">
+      <footer className="border-t border-rim px-4 py-3 space-y-1.5">
         <div className="flex items-center justify-between">
           <span className="label">Status</span>
           <span className="meta flex items-center gap-1.5">
@@ -102,6 +104,20 @@ export function Sidebar({ sessions, activeId, onSelect, onNew, onDelete, status,
           <span className="label">Model</span>
           <span className="meta truncate max-w-[140px]" title={modelLabel}>{modelLabel}</span>
         </div>
+        {user && (
+          <div className="flex items-center justify-between pt-1.5 border-t border-rim mt-1.5">
+            <span className="meta truncate max-w-[160px]" title={user.email}>
+              {user.email}
+            </span>
+            <button
+              type="button"
+              onClick={signOut}
+              className="label text-quiet hover:text-amber transition-colors duration-120"
+            >
+              Sign out
+            </button>
+          </div>
+        )}
       </footer>
     </aside>
   );

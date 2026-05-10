@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api, type Message, type SessionSummary } from "./lib/api";
+import { api, AuthError, type Message, type SessionSummary } from "./lib/api";
+import { useAuth } from "./lib/auth";
 import { streamChat, type StreamHandle } from "./lib/stream";
 import { Sidebar } from "./components/Sidebar";
 import { Conversation } from "./components/Conversation";
@@ -9,6 +10,7 @@ import { Rail } from "./components/Rail";
 type Status = "ok" | "loading" | "error";
 
 export default function App() {
+  const { signOut } = useAuth();
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -17,6 +19,17 @@ export default function App() {
   const [status, setStatus] = useState<Status>("loading");
   const [model, setModel] = useState<string>("…");
   const streamRef = useRef<StreamHandle | null>(null);
+
+  const onAuthError = useCallback(
+    (e: unknown): boolean => {
+      if (e instanceof AuthError) {
+        signOut();
+        return true;
+      }
+      return false;
+    },
+    [signOut]
+  );
 
   // Initial load
   useEffect(() => {
@@ -31,6 +44,7 @@ export default function App() {
         if (list.length > 0) await selectSession(list[0].id);
       } catch (e) {
         if (cancelled) return;
+        if (onAuthError(e)) return;
         setStatus("error");
         setError((e as Error).message);
       }
@@ -52,9 +66,10 @@ export default function App() {
       const detail = await api.getSession(id);
       setMessages(detail.messages);
     } catch (e) {
+      if (onAuthError(e)) return;
       setError((e as Error).message);
     }
-  }, []);
+  }, [onAuthError]);
 
   const newSession = useCallback(async () => {
     try {
@@ -64,9 +79,10 @@ export default function App() {
       setMessages([]);
       setError(null);
     } catch (e) {
+      if (onAuthError(e)) return;
       setError((e as Error).message);
     }
-  }, []);
+  }, [onAuthError]);
 
   const deleteSession = useCallback(
     async (id: string) => {
@@ -78,10 +94,11 @@ export default function App() {
           setMessages([]);
         }
       } catch (e) {
+        if (onAuthError(e)) return;
         setError((e as Error).message);
       }
     },
-    [activeId]
+    [activeId, onAuthError]
   );
 
   const send = useCallback(
@@ -94,6 +111,7 @@ export default function App() {
           setActiveId(s.id);
           sessionId = s.id;
         } catch (e) {
+          if (onAuthError(e)) return;
           setError((e as Error).message);
           return;
         }
@@ -153,7 +171,7 @@ export default function App() {
         }
       });
     },
-    [activeId]
+    [activeId, onAuthError]
   );
 
   const stop = useCallback(() => {

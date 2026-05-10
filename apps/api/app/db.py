@@ -1,33 +1,16 @@
-from contextlib import contextmanager
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from pymongo import MongoClient, ASCENDING, DESCENDING
 
 from .config import settings
 
-engine = create_engine(
-    settings.database_url,
-    connect_args={"check_same_thread": False} if settings.database_url.startswith("sqlite") else {},
-)
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-Base = declarative_base()
+client = MongoClient(settings.mongodb_uri, appname="Voyage")
+db = client[settings.mongodb_db]
+
+sessions_coll = db["sessions"]
+messages_coll = db["messages"]
+users_coll = db["users"]
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-@contextmanager
-def db_scope():
-    db = SessionLocal()
-    try:
-        yield db
-        db.commit()
-    except Exception:
-        db.rollback()
-        raise
-    finally:
-        db.close()
+def init_indexes() -> None:
+    messages_coll.create_index([("session_id", ASCENDING), ("created_at", ASCENDING)])
+    sessions_coll.create_index([("user_id", ASCENDING), ("updated_at", DESCENDING)])
+    users_coll.create_index([("email", ASCENDING)], unique=True)

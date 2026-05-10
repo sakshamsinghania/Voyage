@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
-from .db import Base, engine
-from .routes import chat, sessions
+from .db import init_indexes
+from .routes import auth, chat, sessions
 
-Base.metadata.create_all(bind=engine)
+init_indexes()
 
 app = FastAPI(title="Voyage API", version="0.1.0")
 
@@ -17,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(sessions.router)
 app.include_router(chat.router)
 
