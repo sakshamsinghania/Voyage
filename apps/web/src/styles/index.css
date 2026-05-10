@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    @apply bg-void text-loud font-sans antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv11";
+  }
+
+  ::selection {
+    background: oklch(74% 0.16 75 / 0.35);
+    color: oklch(98% 0.005 60);
+  }
+
+  *:focus-visible {
+    outline: 1px solid oklch(74% 0.16 75);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  /* Scrollbars: tonal, narrow, no default chrome */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(24% 0.008 60);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(32% 0.010 60);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+}
+
+@layer components {
+  .label {
+    @apply text-label font-medium uppercase tracking-wider text-quiet;
+  }
+
+  .meta {
+    @apply text-meta text-quiet font-mono;
+  }
+
+  .divider {
+    @apply h-px bg-rim;
+  }
+
+  /* Streaming caret */
+  .caret::after {
+    content: "";
+    display: inline-block;
+    width: 0.5ch;
+    height: 1em;
+    margin-left: 0.15ch;
+    background: oklch(74% 0.16 75);
+    vertical-align: text-bottom;
+    animation: caret-blink 900ms steps(2, end) infinite;
+  }
+
+  @keyframes caret-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Decrypt scramble zone */
+  .decrypt-scramble {
+    color: oklch(60% 0.13 75 / 0.45);
+    font-family: inherit;
+  }
+
+  /* Markdown rendering for agent output (mono surface) */
+  .agent-md {
+    @apply font-mono text-body text-loud;
+    max-width: 75ch;
+  }
+  .agent-md p {
+    margin-block: 0.75em;
+  }
+  .agent-md h1,
+  .agent-md h2,
+  .agent-md h3 {
+    @apply font-mono font-semibold text-loud;
+    margin-block: 1.4em 0.4em;
+    letter-spacing: -0.01em;
+  }
+  .agent-md h1 {
+    font-size: 1.25rem;
+  }
+  .agent-md h2 {
+    font-size: 1.0625rem;
+  }
+  .agent-md h3 {
+    font-size: 0.95rem;
+  }
+  .agent-md ul,
+  .agent-md ol {
+    padding-left: 1.5ch;
+    margin-block: 0.5em;
+  }
+  .agent-md ul {
+    list-style: none;
+  }
+  .agent-md ul > li::before {
+    content: "—";
+    display: inline-block;
+    width: 1.5ch;
+    margin-left: -1.5ch;
+    color: oklch(64% 0.006 60);
+  }
+  .agent-md ol {
+    list-style: decimal;
+  }
+  .agent-md li {
+    margin-block: 0.2em;
+  }
+  .agent-md a {
+    @apply text-amber underline underline-offset-2;
+    text-decoration-color: oklch(74% 0.16 75 / 0.4);
+  }
+  .agent-md a:hover {
+    text-decoration-color: oklch(74% 0.16 75);
+  }
+  .agent-md code {
+    @apply bg-surface text-loud px-1 rounded-[2px];
+    font-size: 0.875em;
+  }
+  .agent-md pre {
+    @apply bg-surface border border-rim p-4 my-4 overflow-x-auto;
+    border-radius: 2px;
+  }
+  .agent-md pre code {
+    @apply bg-transparent p-0;
+    font-size: 0.875rem;
+  }
+  .agent-md blockquote {
+    @apply border-l border-rim pl-4 text-quiet;
+    margin-block: 0.8em;
+  }
+  .agent-md table {
+    @apply text-meta border border-rim my-4;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .agent-md th,
+  .agent-md td {
+    @apply border border-rim px-3 py-2 text-left;
+  }
+  .agent-md th {
+    @apply bg-surface uppercase tracking-wider text-label font-medium text-quiet;
+  }
+  .agent-md hr {
+    @apply border-0 border-t border-rim my-6;
+  }
+  .agent-md strong {
+    @apply text-loud font-semibold;
+  }
+  .agent-md em {
+    color: oklch(78% 0.04 70);
+    font-style: italic;
+  }
+}

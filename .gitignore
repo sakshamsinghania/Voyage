@@ -1,0 +1,33 @@
+# env
+.env
+.env.local
+.env.*.local
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# node
+node_modules/
+dist/
+.vite/
+
+# db
+*.sqlite
+*.sqlite3
+*.db
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+
+#others
+**/graphify-out/
+.claude/
+.agents/
+CLAUDE.md
