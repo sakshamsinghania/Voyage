@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -5,9 +7,14 @@ from .config import settings
 from .db import init_indexes
 from .routes import auth, chat, sessions
 
-init_indexes()
 
-app = FastAPI(title="Voyage API", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_indexes()
+    yield
+
+
+app = FastAPI(title="Voyage API", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
