@@ -18,6 +18,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>("loading");
   const [model, setModel] = useState<string>("…");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const streamRef = useRef<StreamHandle | null>(null);
 
   const onAuthError = useCallback(
@@ -62,6 +63,7 @@ export default function App() {
     setActiveId(id);
     setMessages([]);
     setError(null);
+    setSidebarOpen(false);
     try {
       const detail = await api.getSession(id);
       setMessages(detail.messages);
@@ -207,7 +209,7 @@ export default function App() {
   }, [newSession]);
 
   return (
-    <div className="flex h-full bg-void text-loud">
+    <div className="flex h-dvh bg-void text-loud">
       <Sidebar
         sessions={sessions}
         activeId={activeId}
@@ -216,20 +218,32 @@ export default function App() {
         onDelete={deleteSession}
         status={status}
         modelLabel={model}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
 
       <main className="flex-1 flex flex-col min-w-0 bg-ground">
-        <header className="h-12 shrink-0 border-b border-rim px-6 lg:px-10 flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="label shrink-0">Session</span>
+        <header className="h-12 shrink-0 border-b border-rim px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden flex items-center justify-center w-9 h-9 -ml-1 text-quiet hover:text-loud transition-colors"
+              aria-label="Open menu"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <path d="M3 5h12M3 9h12M3 13h12" />
+              </svg>
+            </button>
+            <span className="label shrink-0 hidden sm:inline">Session</span>
             <span className="font-mono text-meta text-loud truncate">
               {activeId
                 ? sessions.find((s) => s.id === activeId)?.title ?? "Loading…"
                 : "No session"}
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="label">{streamingId ? "Streaming" : "Idle"}</span>
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            <span className="label hidden sm:inline">{streamingId ? "Streaming" : "Idle"}</span>
             <span
               className={`inline-block w-1.5 h-1.5 rounded-full ${
                 streamingId ? "bg-amber animate-pulse" : "bg-rim"

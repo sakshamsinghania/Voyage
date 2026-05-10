@@ -57,8 +57,8 @@ export function Composer({ disabled, streaming, onSend, onStop }: Props) {
 
   return (
     <div className="border-t border-rim bg-ground/80 backdrop-blur-[2px]">
-      <div className="px-6 lg:px-10 py-4">
-        <div className="flex items-end gap-3">
+      <div className="px-3 sm:px-6 lg:px-10 py-3 sm:py-4">
+        <div className="flex items-end gap-2 sm:gap-3">
           <span className="label pb-2.5 select-none text-amber">›</span>
           <textarea
             ref={taRef}
@@ -75,25 +75,26 @@ export function Composer({ disabled, streaming, onSend, onStop }: Props) {
             <button
               type="button"
               onClick={onStop}
-              className="h-9 px-3 bg-surface border border-rim hover:border-amber text-loud font-mono text-meta transition-colors duration-120"
+              className="h-10 sm:h-9 px-3 bg-surface border border-rim hover:border-amber text-loud font-mono text-meta transition-colors duration-120 shrink-0"
             >
               <span className="label text-amber">Stop</span>
-              <span className="meta ml-2 text-quiet">Esc</span>
+              <span className="meta ml-2 text-quiet hidden sm:inline">Esc</span>
             </button>
           ) : (
             <button
               type="button"
               onClick={send}
               disabled={disabled || value.trim().length === 0}
-              className="h-9 px-3 bg-amber text-void font-mono text-meta font-medium hover:bg-amber-dim transition-colors duration-120 disabled:bg-rim disabled:text-quiet disabled:cursor-not-allowed"
+              className="h-10 sm:h-9 px-3 bg-amber text-void font-mono text-meta font-medium hover:bg-amber-dim transition-colors duration-120 disabled:bg-rim disabled:text-quiet disabled:cursor-not-allowed shrink-0"
             >
               <span className="label !tracking-wider !text-void disabled:!text-quiet">Send</span>
-              <span className="meta ml-2 text-void/60">⌘↵</span>
+              <span className="meta ml-2 text-void/60 hidden sm:inline">⌘↵</span>
             </button>
           )}
         </div>
-        <div className="mt-2 flex items-center gap-4 pl-5">
-          <span className="label">Mono input · markdown out · ⌘↵ send · Esc cancel · ↑ recall</span>
+        <div className="mt-1.5 sm:mt-2 flex items-center gap-4 pl-5">
+          <span className="label hidden sm:inline">Mono input · markdown out · ⌘↵ send · Esc cancel · ↑ recall</span>
+          <span className="label sm:hidden">↑ recall · Enter send</span>
         </div>
       </div>
     </div>

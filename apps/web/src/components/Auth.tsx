@@ -66,16 +66,16 @@ export function Auth() {
     mode === "signin" ? "New here? Create account →" : "Have account? Sign in →";
 
   return (
-    <div className="min-h-full flex flex-col bg-ground text-loud">
-      <header className="px-8 lg:px-12 pt-8 flex items-center">
+    <div className="min-h-dvh flex flex-col bg-ground text-loud">
+      <header className="px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 flex items-center">
         <span className="font-mono text-title font-semibold tracking-tight flex items-baseline gap-1.5">
           <span className="inline-block w-2.5 h-2.5 bg-amber translate-y-[1px]" aria-hidden />
           <span>voyage</span>
         </span>
       </header>
 
-      <main className="flex-1 px-8 lg:px-12 flex">
-        <div className="w-full max-w-[360px] mt-[18vh] ml-0 md:ml-[8vw]">
+      <main className="flex-1 px-4 sm:px-8 lg:px-12 flex">
+        <div className="w-full max-w-[360px] mt-[12vh] sm:mt-[18vh] ml-0 md:ml-[8vw]">
           <div key={mode} className="auth-mode-fade">
             <h1 className="font-sans text-head font-semibold tracking-tight mb-1">
               {heading}
@@ -146,7 +146,7 @@ export function Auth() {
         </div>
       </main>
 
-      <footer className="px-8 lg:px-12 pb-6 flex items-center gap-3">
+      <footer className="px-4 sm:px-8 lg:px-12 pb-6 flex items-center gap-3">
         <span className="inline-block w-1 h-1 rounded-full bg-amber" aria-hidden />
         <span className="label">auth · v0.1 · render.com</span>
       </footer>

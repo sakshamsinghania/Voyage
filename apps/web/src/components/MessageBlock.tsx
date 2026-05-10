@@ -13,12 +13,12 @@ interface Props {
 export function MessageBlock({ message, streaming }: Props) {
   if (message.role === "user") {
     return (
-      <article className="px-8 lg:px-12 py-5 border-b border-rim/60">
+      <article className="px-4 sm:px-8 lg:px-12 py-4 sm:py-5 border-b border-rim/60">
         <header className="flex items-center gap-3 mb-2">
           <span className="label">You</span>
           <span className="meta">{formatTime(message.created_at)}</span>
         </header>
-        <div className="text-body text-loud whitespace-pre-wrap max-w-[75ch]">
+        <div className="text-body text-loud whitespace-pre-wrap max-w-[75ch] break-words">
           {message.content}
         </div>
       </article>
@@ -27,7 +27,7 @@ export function MessageBlock({ message, streaming }: Props) {
 
   if (message.role === "tool") {
     return (
-      <article className="px-8 lg:px-12 py-4 bg-surface/40 border-b border-rim/60">
+      <article className="px-4 sm:px-8 lg:px-12 py-4 bg-surface/40 border-b border-rim/60">
         <header className="flex items-center gap-3 mb-1">
           <span className="label text-amber-dim">Tool</span>
           <span className="meta">{formatTime(message.created_at)}</span>
@@ -43,7 +43,7 @@ export function MessageBlock({ message, streaming }: Props) {
   }, [message.content]);
 
   return (
-    <article className="px-8 lg:px-12 py-6 border-b border-rim/60">
+    <article className="px-4 sm:px-8 lg:px-12 py-4 sm:py-6 border-b border-rim/60">
       <header className="flex items-center gap-3 mb-3">
         <span className="label text-amber">Voyage</span>
         <span className="meta">{formatTime(message.created_at)}</span>

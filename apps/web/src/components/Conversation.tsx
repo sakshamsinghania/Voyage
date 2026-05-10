@@ -47,7 +47,7 @@ export function Conversation({ messages, streamingId, error, onDismissError }: P
 
   if (messages.length === 0 && !error) {
     return (
-      <div className="flex-1 flex items-end px-8 lg:px-12 py-12">
+      <div className="flex-1 flex items-end px-4 sm:px-8 lg:px-12 py-8 sm:py-12">
         <div className="max-w-[60ch]">
           <div className="label mb-3 text-amber">Voyage · ready</div>
           <p className="text-head text-loud font-medium tracking-tight">
@@ -63,24 +63,24 @@ export function Conversation({ messages, streamingId, error, onDismissError }: P
   }
 
   return (
-    <div ref={scrollRef} className="flex-1 overflow-y-auto">
+    <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain">
       <div className="min-h-full">
         {messages.map((m) => (
           <MessageBlock key={m.id} message={m} streaming={m.id === streamingId} />
         ))}
         {error && (
-          <article className="px-8 lg:px-12 py-5 bg-surface border-y border-amber-deep/60">
+          <article className="px-4 sm:px-8 lg:px-12 py-5 bg-surface border-y border-amber-deep/60">
             <header className="flex items-center justify-between mb-2">
               <span className="label text-amber">Error</span>
               <button
                 type="button"
                 onClick={onDismissError}
-                className="label text-quiet hover:text-loud transition-colors"
+                className="label text-quiet hover:text-loud transition-colors min-h-[32px] flex items-center"
               >
                 Dismiss
               </button>
             </header>
-            <pre className="font-mono text-meta text-loud whitespace-pre-wrap">{error}</pre>
+            <pre className="font-mono text-meta text-loud whitespace-pre-wrap break-words">{error}</pre>
           </article>
         )}
       </div>
